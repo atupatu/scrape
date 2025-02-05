@@ -4,7 +4,10 @@ name: Metro Rail Analysis Cron
 on:
   schedule:
     - cron: '0 */3 * * *'  # Runs every 3 hours
-  workflow_dispatch:  # Allows manual trigger from GitHub UI
+  workflow_dispatch:        # This enables manual running
+  push:                    # This will run on every push (for testing)
+    branches:
+      - main  # Allows manual trigger from GitHub UI
 
 jobs:
   analyze:
