@@ -1,0 +1,28 @@
+# .github/workflows/cron.yml
+name: Metro Rail Analysis Cron
+
+on:
+  schedule:
+    - cron: '0 */3 * * *'  # Runs every 3 hours
+  workflow_dispatch:  # Allows manual trigger from GitHub UI
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Use Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '18'
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Run analysis
+      env:
+        MONGODB_URI: ${{ secrets.MONGODB_URI }}
+        GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+      run: node scripts/cron-job.js
