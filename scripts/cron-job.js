@@ -9,7 +9,12 @@ async function runCronJob() {
     // Initialize scraper
     const scraper = new MetroRailScraper();
     console.log('Scraping articles...');
-    const scrapedData = await scraper.scrape_site(1);
+    const scrapedData = await scraper.scrapeSite(1);  // Changed from scrape_site to scrapeSite to match the class method
+    
+    if (!scrapedData || scrapedData.length === 0) {
+      console.log('No articles found to analyze');
+      process.exit(0);
+    }
     
     // Analyze articles
     console.log(`Found ${scrapedData.length} articles. Starting analysis...`);
@@ -20,6 +25,9 @@ async function runCronJob() {
       skipped: analysisResult.skipped?.length || 0,
       errors: analysisResult.errors?.length || 0
     });
+
+    // Successful execution
+    process.exit(0);
     
   } catch (error) {
     console.error('Cron job failed:', error);
@@ -27,4 +35,11 @@ async function runCronJob() {
   }
 }
 
+// Handle any unhandled promise rejections
+process.on('unhandledRejection', (error) => {
+  console.error('Unhandled promise rejection:', error);
+  process.exit(1);
+});
+
+// Run the job
 runCronJob();
